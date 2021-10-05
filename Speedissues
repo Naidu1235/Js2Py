@@ -1,0 +1,333 @@
+var webdriver = require('selenium-webdriver'),
+	By = webdriver.By,
+	until = webdriver.until;
+chai = require('chai'),
+	expect = chai.expect,
+	assert = chai.assert;
+var fs = require('fs');
+var chrome = require("selenium-webdriver/chrome");
+var options = new chrome.Options();
+options.addArguments("incognito");
+options.addArguments("test-type");
+options.addArguments("--window-size=2000x900");
+//options.addArguments("--remote-debugging-port=9");
+
+options.addArguments("enable-automation");
+options.addArguments("--headless");
+//options.addArguments("--window-size=1920,1080");
+options.addArguments("--no-sandbox");
+options.addArguments("--disable-extensions");
+options.addArguments("--dns-prefetch-disable");
+options.addArguments("--disable-gpu");
+options.addArguments("--window-size=2000x900");
+//DestinationData = require('./testdata/pageloadddata1.json');
+var csvWriter = require('csv-write-stream')
+var writer1 = csvWriter({
+    headers: ["TestExecutionDateTime","TotalExecutionTime"],sendHeaders: false
+})
+writer1.pipe(fs.createWriteStream('./testdata/UpdatedGMT-CruiseImagine1.csv', {
+    flags: 'a'
+}))
+
+var writer2 = csvWriter({
+    headers: ["TestExecutionDateTime", "TotalExecutionTime"],sendHeaders: false
+})
+writer2.pipe(fs.createWriteStream('./testdata/UpdatedGMT-PortfolioImagine1.csv', {
+    flags: 'a'
+}))
+
+var writer3 = csvWriter({
+    headers: ["TestExecutionDateTime","TotalExecutionTime"],sendHeaders: false
+})
+writer3.pipe(fs.createWriteStream('./testdata/UpdatedGMT-CruiseWTH.csv', {
+    flags: 'a'
+}))
+
+var writer4 = csvWriter({
+    headers: ["TestExecutionDateTime","TotalExecutionTime"],sendHeaders: false
+})
+writer4.pipe(fs.createWriteStream('./testdata/UpdatedGMT-PortfolioWTH.csv', {
+    flags: 'a'
+}))
+
+var writer5 = csvWriter({
+    headers: ["TestExecutionDateTime","TotalExecutionTime"],sendHeaders: false
+})
+writer5.pipe(fs.createWriteStream('./testdata/UpdatedGMT-Cruise-Cruise1st.csv', {
+    flags: 'a'
+}))
+
+var writer6 = csvWriter({
+    headers: ["TestExecutionDateTime","TotalExecutionTime"],sendHeaders: false
+})
+writer6.pipe(fs.createWriteStream('./testdata/UpdatedGMT-Portfolio-Cruise1st.csv', {
+    flags: 'a'
+}))
+
+
+
+// var speed = {
+//     TestID: "Test",
+//     TestExecutionDateTime: "Test",
+//     LoginURLLOADTIME: "Test",
+//     HomePAGELOADTIME: "Test",
+//     CruiseJourneyLoadTime: "Test",
+//     ResultPageLoadTime: "Test"
+// };
+
+//writer1.write(speed);
+
+describe('ISELL AWS', function() {
+	var ii = 0;
+	beforeEach('Browser initializaton', async function() {
+		//driver = new webdriver.Builder().withCapabilities(webdriver.Capabilities.chrome()).build();
+		driver = new webdriver.Builder()
+			.forBrowser("chrome")
+			.setChromeOptions(options)
+			.build();
+		await driver.manage().window().maximize();
+	
+	});
+
+
+	afterEach(async function() {
+		var myURL1 = await driver.getCurrentUrl();
+        var m = myURL1.match(/sessionkey=([^&;]+)/);
+        await allure.createAttachment('sessionkey: ' + m + "/", Buffer.from(myURL1));
+        if (this.currentTest.state == "passed") {
+            var screenshot = await driver.takeScreenshot();
+            await allure.createAttachment('Test Passed, attached screenshot', Buffer.from(screenshot, "base64"));   
+        } else if (this.currentTest.state == "failed") {
+            await allure.addLabel("severity", "trivial");
+            var screenshot = await driver.takeScreenshot();
+            await allure.createAttachment('Test Failed, attached screenshot', Buffer.from(screenshot, "base64"));          
+        }
+		await driver.quit();
+	});
+
+
+
+	//DestinationData.forEach(function(data, awswebsite, nttwebsite, clientcode, awsid, awspassword) {
+		var date = new Date().toGMTString();
+
+		it('Cruise-Imagine - '+ date +'', async function() {
+		var excelarray = [];
+		var start1 = new Date().getTime();
+		var start = new Date().getTime();
+ 		await driver.get("http://booking.imaginecruising.co.uk/extranet");
+        await driver.manage().window().maximize();   
+        await driver.wait(until.elementLocated(By.name("username")), 300000);
+        var end1 = new Date().getTime();
+        var pageloadtime1 = (end1 - start1) / 1000;
+        console.log(end1 - start1);
+        console.log("pageloadtime1::" + pageloadtime1);
+       	var start2 = new Date().getTime();
+        await driver.findElement(By.name("username")).sendKeys("!hgutam");
+        await driver.findElement(By.name("password")).sendKeys("82+DG'Dv8%m~H>g:");
+        await driver.findElement(By.xpath("//input[@class='awesomeformbutton']")).click();
+        var end2 = new Date().getTime();
+        var pageloadtime2 = (end2 - start2) / 1000;
+        console.log(end2 - start2);
+        console.log("pageloadtime2::" + pageloadtime2);
+        var start3 = new Date().getTime();
+
+        await driver.findElement(By.linkText("Travel Search")).click();
+        await driver.findElement(By.linkText("Cruise")).click();
+        var end3 = new Date().getTime();
+        var pageloadtime3 = (end3 - start3) / 1000;
+        console.log(end3 - start3);
+        console.log("pageloadtime3::" + pageloadtime3); 
+        var start4 = new Date().getTime();  
+        await driver.findElement(By.id("depdate-month")).sendKeys("May");
+        await driver.findElement(By.xpath("(//input[@name='searchbutton'])")).click();
+        await driver.wait(until.elementLocated(By.id("flightsummary")), 300000);
+        var end4 = new Date().getTime();
+        var pageloadtime4 = (end4 - start4) / 1000;
+        console.log(end4 - start4);
+        console.log("pageloadtime4::" + pageloadtime4);
+        var end = new Date().getTime();
+        var pageloadtime = (end - start) / 1000;
+        console.log(end - start);
+        console.log("pageloadtime::" + pageloadtime);
+		excelarray.push(date, pageloadtime);
+        writer1.write(excelarray);
+		});
+
+
+
+		it('Portfolio-Imagine - '+ date +'', async function() {
+		var excelarray = [];	
+		var start1 = new Date().getTime();
+		var start = new Date().getTime();
+		await driver.get("http://booking.imaginecruising.co.uk/extranet");
+        await driver.manage().window().maximize();   
+        var end1 = new Date().getTime();
+        var pageloadtime1 = (end1 - start1) / 1000;
+        console.log(end1 - start1);
+        console.log("pageloadtime1::" + pageloadtime1);
+       	var start2 = new Date().getTime();
+        await driver.wait(until.elementLocated(By.name("username")), 300000);
+        await driver.findElement(By.name("username")).sendKeys("!hgutam");
+        await driver.findElement(By.name("password")).sendKeys("82+DG'Dv8%m~H>g:");
+        await driver.findElement(By.xpath("//input[@class='awesomeformbutton']")).click();
+        var end2 = new Date().getTime();
+        var pageloadtime2 = (end2 - start2) / 1000;
+        console.log(end2 - start2);
+        console.log("pageloadtime2::" + pageloadtime2);
+        var start3 = new Date().getTime();
+        await driver.findElement(By.id("menustartbutton")).click();
+   		await driver.findElement(By.linkText("Booking Administration")).click();
+    	await driver.findElement(By.linkText("Portfolios")).click();
+    	var end3 = new Date().getTime();
+        var pageloadtime3 = (end3 - start3) / 1000;
+        console.log(end3 - start3);
+        console.log("pageloadtime3::" + pageloadtime3); 
+        var start4 = new Date().getTime();
+    	await driver.findElement(By.linkText("Edit Booking")).click();
+    	var end4 = new Date().getTime();
+        var pageloadtime4 = (end4 - start4) / 1000;
+        console.log(end4 - start4);
+        console.log("pageloadtime4::" + pageloadtime4);
+        var start5 = new Date().getTime();
+    	await driver.findElement(By.linkText("Costings")).click();
+    	var end5 = new Date().getTime();
+        var pageloadtime5 = (end5 - start5) / 1000;
+        console.log(end5 - start5);
+        console.log("pageloadtime5::" + pageloadtime5);
+		var end = new Date().getTime();
+        var pageloadtime = (end - start) / 1000;
+        console.log(end - start);
+        console.log("pageloadtime::" + pageloadtime);
+		excelarray.push(date, pageloadtime);
+        writer2.write(excelarray);			
+		});
+
+
+		it('Cruise-WTH - '+ date +'', async function() {
+			var excelarray = [];
+		var start = new Date().getTime();
+ 		await driver.get("http://wth.site.traveltek.net/extranet");
+        await driver.manage().window().maximize();   
+        
+        await driver.wait(until.elementLocated(By.name("username")), 300000);
+        await driver.findElement(By.name("username")).sendKeys("!hgutam");
+        await driver.findElement(By.name("password")).sendKeys("82+DG'Dv8%m~H>g:");
+        await driver.findElement(By.xpath("//input[@class='awesomeformbutton']")).click();
+         await driver.findElement(By.linkText("Travel Search")).click();
+            await driver.findElement(By.linkText("Cruise")).click();
+           
+            await driver.findElement(By.id("depdate-month")).sendKeys("May");
+
+            await driver.findElement(By.xpath("(//input[@name='searchbutton'])")).click();
+            await driver.wait(until.elementLocated(By.id("flightsummary")), 300000);
+            var end = new Date().getTime();
+        var pageloadtime = (end - start) / 1000;
+        console.log(end - start);
+        console.log("pageloadtime::" + pageloadtime);
+		excelarray.push(date, pageloadtime);
+        writer3.write(excelarray);
+            // var myURL1 = await driver.getCurrentUrl();
+            // var m = myURL1.match(/sessionkey=([^&;]+)/);	
+		});
+
+
+
+		it('Portfolio-WTH - '+ date +'', async function() {
+			var excelarray = [];
+			var start = new Date().getTime();
+		await driver.get("http://wth.site.traveltek.net/extranet");
+        await driver.manage().window().maximize();   
+        //await driver.sleep(5000);
+        await driver.wait(until.elementLocated(By.name("username")), 300000);
+        await driver.findElement(By.name("username")).sendKeys("!hgutam");
+        await driver.findElement(By.name("password")).sendKeys("82+DG'Dv8%m~H>g:");
+        await driver.findElement(By.xpath("//input[@class='awesomeformbutton']")).click();
+
+        await driver.findElement(By.id("menustartbutton")).click();
+   		await driver.findElement(By.linkText("Booking Administration")).click();
+    	await driver.findElement(By.linkText("Portfolios")).click();
+    	await driver.findElement(By.linkText("Edit Booking")).click();
+    	await driver.findElement(By.linkText("Costings")).click();
+    		var end = new Date().getTime();
+        var pageloadtime = (end - start) / 1000;
+        console.log(end - start);
+        console.log("pageloadtime::" + pageloadtime);
+		excelarray.push(date, pageloadtime);
+        writer4.write(excelarray);
+			
+		});
+
+		it('Cruise-Cruise1st - '+ date +'', async function() {
+			var excelarray = [];
+			var start = new Date().getTime();
+ 		await driver.get("http://www.cruise1st.co.uk/extranet");
+        await driver.manage().window().maximize();   
+        //await driver.sleep(5000);
+        await driver.wait(until.elementLocated(By.name("username")), 300000);
+        await driver.findElement(By.name("username")).sendKeys("!hgutam");
+        await driver.findElement(By.name("password")).sendKeys("82+DG'Dv8%m~H>g:");
+        await driver.findElement(By.xpath("//input[@class='awesomeformbutton']")).click();
+         await driver.findElement(By.linkText("Travel Search")).click();
+            await driver.findElement(By.linkText("Cruise")).click();
+           
+             await driver.findElement(By.id("monthyear")).sendKeys("May 2021");
+
+            await driver.findElement(By.xpath("(//input[@name='searchbutton'])")).click();
+            await driver.wait(until.elementLocated(By.id("flightsummary")), 300000);
+            var end = new Date().getTime();
+        var pageloadtime = (end - start) / 1000;
+        console.log(end - start);
+        console.log("pageloadtime::" + pageloadtime);
+		excelarray.push(date, pageloadtime);
+        writer5.write(excelarray);
+            // var myURL1 = await driver.getCurrentUrl();
+            // var m = myURL1.match(/sessionkey=([^&;]+)/);
+
+
+
+			
+		});
+
+
+
+		it('Portfolio-Cruise1st - '+ date +'', async function() {
+			var excelarray = [];
+			var start = new Date().getTime();
+		await driver.get("http://www.cruise1st.co.uk/extranet");
+        await driver.manage().window().maximize();   
+        //await driver.sleep(5000);
+        await driver.wait(until.elementLocated(By.name("username")), 300000);
+        await driver.findElement(By.name("username")).sendKeys("!hgutam");
+        await driver.findElement(By.name("password")).sendKeys("82+DG'Dv8%m~H>g:");
+        await driver.findElement(By.xpath("//input[@class='awesomeformbutton']")).click();
+
+        await driver.findElement(By.id("menustartbutton")).click();
+   		await driver.findElement(By.linkText("Booking Administration")).click();
+    	await driver.findElement(By.linkText("Portfolios")).click();
+    	await driver.findElement(By.linkText("Edit Booking")).click();
+    	await driver.findElement(By.linkText("Costings")).click();
+    		var end = new Date().getTime();
+        var pageloadtime = (end - start) / 1000;
+        console.log(end - start);
+        console.log("pageloadtime::" + pageloadtime);
+		excelarray.push(date, pageloadtime);
+        writer6.write(excelarray);
+			
+		});
+
+
+
+
+
+
+		
+
+
+
+
+
+
+	
+	//});
+
+});
